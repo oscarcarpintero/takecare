@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+
+<head>
+    <title>Pacientes</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css"
+        integrity="sha512-xh6O/CkQoPOWDdYTDqeRdPCVd1SpvCA9XXcUnZS2FmJNp1coAFzvtCN9BmamE+4aHK8yyUHUSCcJHgXloTyT2A=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script type="text/javascript" th:src="@{/webjars/jquery/jquery.min.js}"></script>
+    <script type="text/javascript" th:src="@{/webjars/bootstrap/js/bootstrap.min.js}"></script>
+      <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display+SC&display=swap" rel="stylesheet">
+
+
+</head>
+
+<body>
+    <div th:replace="fragments/header :: header"></div>
+   
+    <div th:if="${message != null}" class="alert alert-success alert-dismissible fade show message" role="alert">
+        [[${message}]]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+
+    <div class="container">
+      <h2 class="text-center">Pacientes</h2>
+        <table class="table table-hover table-responsive-xl">
+            <thead class="thead-light">
+              <tr>
+                <th hidden scope="col">Codigo</th>
+                <th scope="col">Nombre</th>
+                <th scope="col">Nacimiento</th>
+                <th scope="col">Contacto</th>
+                <th scope="col">Acciones</th>
+               
+              </tr>
+            </thead>
+            <tbody>
+              <tr th:each="paciente : ${pacientes}">
+                <th hidden scope="row">[[${paciente.codigo}]]</th>
+                <td>[[${paciente.nombre}]]</td>                
+                <td>[[${paciente.fechanacimiento}]]</td>
+                <td>[[${paciente.contacto}]]</td>
+                <td>
+                  <a th:href="@{'/paciente/' + ${paciente.codigo}}" title="Edita este paciente"
+                    class="fa-regular fa-pen-to-square icon-dark"></a>
+                  &nbsp;
+                  <a th:href="@{'/pacientes/delete/' + ${paciente.ubicacion.codigo} + '/' + ${paciente.codigo}}" th:pacienteTitulo="${paciente.nombre}" id="btnDelete"
+                    title="Borra este paciente" class="fa-regular fa-trash-can icon-dark btn-delete"></a>
+                    &nbsp;
+                    <a th:href="@{'/tomas/' + ${paciente.codigo}}"
+                            id="btnTomasPaciente" title="Toma de medicamentos"
+                            class="fa fa-capsules icon-dark "></a>
+
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="botonesVolverAlta">
+            <div class="botonVolver">
+            
+              <a class="btn btn-secondary" th:href="@{/ubicaciones}">Volver</a>
+  
+          </div>
+
+          <div class="botonAlta">
+            
+            <a class="btn btn-primary" th:href="@{/pacientes/{codigoUbicacion}/alta(codigoUbicacion=${codigoUbicacion})}">Alta</a>
+
+        </div>
+      </div>
+    </div>
+    <div class="modal fade text-center" id="confirmModal">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Confirmación borrado</h5>
+              <button type="button" class="close" data-bs-dismiss="modal">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+    
+            <div class="modal-body">
+              <span id="confirmText"></span>
+            </div>
+    
+            <div class="modal-footer botonera">
+              <a type="button" id="yesBtn" class="btn btn-danger">Si</a>
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    
+    <div th:replace="fragments/footer :: footer"></div>
+    <script type="text/javascript">
+        $(document).ready(function () {
+          $(".btn-delete").on("click", function (e) {
+            e.preventDefault();
+            link = $(this);
+    
+            pacienteTitulo = link.attr("pacienteTitulo");
+            $("#yesBtn").attr("href", link.attr("href"));
+            $("#confirmText").html("Deseas borrar a \<strong\>" + pacienteTitulo + "\<\/strong\>?");
+            $("#confirmModal").modal('show');
+          });
+    
+         
+        });
+      </script>
+</html>

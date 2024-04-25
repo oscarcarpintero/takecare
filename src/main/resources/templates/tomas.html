@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+
+<head>
+  <title>Tomas</title>
+  <link rel="stylesheet" type="text/css" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}" />
+  <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css"
+    integrity="sha512-xh6O/CkQoPOWDdYTDqeRdPCVd1SpvCA9XXcUnZS2FmJNp1coAFzvtCN9BmamE+4aHK8yyUHUSCcJHgXloTyT2A=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <script type="text/javascript" th:src="@{/webjars/jquery/jquery.min.js}"></script>
+  <script type="text/javascript" th:src="@{/webjars/bootstrap/js/bootstrap.min.js}"></script>
+  <link rel="stylesheet" th:href="@{/webjars/bootstrap-icons/1.11.1/iconfont/bootstrap-icons.css}" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display+SC&display=swap" rel="stylesheet">
+  <script type="text/javascript">
+    function cambiarToma(codigoToma) {
+      window.location.href = "/cambiarToma/" + codigoToma;
+    }
+  </script>
+
+</head>
+
+<body>
+  <div th:replace="fragments/header :: header"></div>
+
+  <div th:if="${message != null}" class="alert alert-success alert-dismissible fade show message" role="alert">
+    [[${message}]]
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+
+  <div class="container">
+    <h2 class="text-center">Tomas</h2>
+    <table class="table table-hover table-responsive-xl">
+      <thead class="thead-light">
+        <tr>
+          <th hidden scope="col">Codigo</th>
+          <th scope="col">Nombre</th>
+          <th scope="col">Fecha</th>
+          <th scope="col">Horario</th>
+          <th scope="col">Dosis</th>
+          <th scope="col">Tomada</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr th:each="toma : ${tomas}">
+          <th hidden scope="row">[[${toma.codigo}]]</th>
+          <td>[[${toma.medicamento.nombre}]]</td>
+          <td>[[${toma.fecha}]]</td>
+          <td>[[${toma.horario}]]</td>
+          <td>[[${toma.dosis}]]</td>
+          <td>
+            <i th:if="${toma.tomada}" class="fa fa-check verde" th:onclick="'javascript:cambiarToma(' + ${toma.codigo} + ')'"  ></i>
+            <i th:if="${!toma.tomada}" class="fa fa-times rojo" th:onclick="'javascript:cambiarToma(' + ${toma.codigo} + ')'"  ></i>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    
+
+    <div class="botonesVolverAlta">
+      <div class="botonVolver">
+ 
+        <a class="btn btn-secondary" th:href="@{/pacientes/{codigoUbicacion}(codigoUbicacion=${codigoUbicacion})}">Volver</a>
+
+    </div>
+    
+    <div class="botonAlta">
+
+      <a class="btn btn-primary" th:href="@{/tomas/{codigoPaciente}/alta(codigoPaciente=${codigoPaciente})}">Alta</a>
+
+    </div>
+    </div>
+  </div>
+  <div class="modal fade text-center" id="confirmModal">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Confirmación borrado</h5>
+          <button type="button" class="close" data-bs-dismiss="modal">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+
+        <div class="modal-body">
+          <span id="confirmText"></span>
+        </div>
+
+        <div class="modal-footer botonera">
+          <a type="button" id="yesBtn" class="btn btn-danger">Si</a>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div th:replace="fragments/footer :: footer"></div>
+  <script type="text/javascript">
+    $(document).ready(function () {
+      $(".btn-delete").on("click", function (e) {
+        e.preventDefault();
+        link = $(this);
+
+        tomaTitulo = link.attr("tomaTitulo");
+        $("#yesBtn").attr("href", link.attr("href"));
+        $("#confirmText").html("Deseas borrar la toma \<strong\>" + tomaTitulo + "\<\/strong\>?");
+        $("#confirmModal").modal('show');
+      });
+
+
+    });
+  </script>
+
+</html>
